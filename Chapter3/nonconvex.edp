@@ -1,0 +1,65 @@
+// nonconvex.edp
+// user's choice
+real R = 1.0;
+// real angle = 0.7;
+real angle = atof(ARGV[2]); 
+int maxiteration = 6; // 5->64, 6->128
+// parameters for describing a domain
+real omega = angle*pi;
+real alpha = 1.0/angle;
+// exact solution
+func rd = sqrt(x*x+y*y); 
+func th = (y>=0)? atan2(y,x) : (2*pi-atan2(-y,x));
+func w = pow(rd(x,y),alpha)*sin(alpha*th(x,y));
+func phi = 1 - (rd(x,y)^2)/(R^2);
+func exact = w*phi; // exact solution
+func f = (4.0/(R^2))*(1.0+alpha)*w;  // rifht-hand side function
+func g = 0;                   // Dirichlet boundary condition
+real hsize, hold;                 // mesh size
+real errh1, errh1old, errl2, errl2old, rateh1, ratel2; 
+int n, nn;
+
+// domain
+border G1(t = 0, 1) {x = R*cos(omega*t); y = R*sin(omega*t);}
+border G2(t = 0, 1) {x = (1-t)*R*cos(omega); y = (1-t)*R*sin(omega);}
+border G3(t = 0, 1) {x = R*t; y = 0;}
+
+//fine triangulation
+nn = 256;
+mesh Th2 = buildmesh(G1(omega*nn) + G2(nn) + G3(nn)); ; 
+fespace Vh2(Th2, P1); 
+Vh2 uproj, uex, eu;
+uex = exact;
+
+// output file	
+ofstream f1("nonconvex.dat");
+
+// n=4,8,16,32,64
+n = 2;
+errh1old = errl2old = 1.0;
+hold = 1.0;
+for (int i = 1; i <= maxiteration; i++) {
+    n = 2*n;
+    mesh Th = buildmesh(G1(omega*n) + G2(n) + G3(n)); 
+    fespace Vh(Th, P1); 
+    Vh u, v, hh = hTriangle; 
+    hsize = hh[].max;
+    solve Poisson(u,v) = int2d(Th)(dx(u)*dx(v) + dy(u)*dy(v)) - int2d(Th) (f*v)  + on(G1,G2,G3,u = g);
+    // computation of error using the fine triangulation        
+    uproj = u;
+    eu = uproj - uex; // error function 
+    errh1 = sqrt( int2d(Th2)(dx(eu)*dx(eu) + dy(eu)*dy(eu)) ); // H1-error
+    errl2 = sqrt( int2d(Th2)(eu^2) );                       // L2-error
+    // computation of rates
+    rateh1 = (log(errh1) - log(errh1old))/(log(hsize) - log(hold));     
+    ratel2 = (log(errl2) - log(errl2old))/(log(hsize) - log(hold));
+    errh1old = errh1;
+    errl2old = errl2;
+    hold = hsize;
+    // output results
+    f1 << hsize << " " 
+    << errh1 << " " << rateh1 << " " 
+    << errl2 << " " << ratel2<< " " << endl;
+    //
+    plot(u,dim=3,fill=true);
+}

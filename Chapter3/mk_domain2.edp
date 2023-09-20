@@ -1,0 +1,44 @@
+// parameters
+int n = atoi(ARGV[2]); // % freefem++ mk_domain1.edp 5
+real hsize;
+// DBC --> label odd ,  RBC --> label even
+border G1(t = 0, 2) {x = t; y = 0; label=1;}
+border G2(t = 0, 1) {x = 2; y = t; label=2;}
+border G3(t = 0, 3) {x = 2-t; y = 1; label=4;}
+border G4(t = 0, 1) {x = -1; y = 1-t; label=6;}
+border G5(t = 0, 1) {x = -1-t; y = 0; label=8;}
+border G6(t = 0, 1) {x = -2; y = -t; label=10;}
+border G7(t = 0, 2) {x = -2+t; y = -1; label=12;}
+border G8(t = 0, 1) {x = 0; y = -1+t; label=14;}
+// triangulation
+mesh Th = buildmesh(G1(2*n)+G2(n)+G3(3*n)+G4(n)+G5(n)+G6(n)+G7(2*n)+G8(n));
+// FE space
+fespace Vh(Th, P1);
+Vh hh= hTriangle;
+hsize = hh[].max;
+cout << "hsize= " + hsize + endl;
+/********************  For output  ********************/
+// geometry
+plot(Th,wait=1,ps="mk_domain2.ps");
+// get total nums
+int Nn=Th.nv, Ne=Th.nt, Nb=Th.nbe, NbR=0, NbD=0, k;
+for(k=0;k<Nb;k++){
+  if(Th.be(k).label %2 == 0) NbR++;
+  else NbD++;
+}
+ofstream ff("mk_domain2.dat");
+ff<<Nn<<" "<<Ne<<" "<<NbR<<" "<<NbD<<endl;
+// np->xy, el->np, nbe->np
+// indexing starts from 0 in FreeFEM++ but from 1 when "savemesh"ing
+for(k=0;k<Nn;k++) ff<<Th(k).x<<" "<<Th(k).y<<" "<<Th(k).label<<" 0"<<endl;
+for(k=0;k<Ne;k++) ff<<Th[k][0]+1<<" "<<Th[k][1]+1<<" "<<Th[k][2]+1<<" "<<Th[k].label<<endl;
+for(k=0;k<Nb;k++){
+  if(Th.be(k).label %2 == 0){
+    ff<<Th.be(k)[0]+1<<" "<<Th.be(k)[1]+1<<" "<<Th.be(k).label<<" 0"<<endl;
+  }
+}
+for(k=0;k<Nb;k++){
+  if(Th.be(k).label %2 != 0){
+    ff<<Th.be(k)[0]+1<<" "<<Th.be(k)[1]+1<<" "<<Th.be(k).label<<" 0"<<endl;
+  }
+}
