@@ -1,5 +1,5 @@
 function z=femFunc4(id, x, y)
-  switch id
+switch id
     case 0 % right-hand side
     z = 0;
     case 1 % initial data
