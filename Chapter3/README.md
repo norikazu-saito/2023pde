@@ -12,23 +12,23 @@
 
 ### 図3.6
 - はじめに、Freefem++を利用して、
--- %freefem++ mk_domain2.edp 5
+- %freefem++ mk_domain2.edp 5
 - mk_domain2.dat のファイル名を mk_domain2_5.dat に変更して、
--- %freefem++ mk_domain2.edp 10   
+- %freefem++ mk_domain2.edp 10   
 - mk_domain2.dat のファイル名を mk_domain2_510dat に変更
 - その後MTALABで、以下を行う
--- plotTriangulation("mk_domain2_5.dat")
--- plotTriangulation("mk_domain2_10.dat")
+- plotTriangulation("mk_domain2_5.dat")
+- plotTriangulation("mk_domain2_10.dat")
 
 ### 図3.7
 - はじめに、Freefem++を利用して、
--- %freefem++ mk_domain1.edp 10
+- %freefem++ mk_domain1.edp 10
 - mk_domain1.dat のファイル名を mk_domain1_10.dat に変更
--- %freefem++ mk_domain1.edp 20
+- %freefem++ mk_domain1.edp 20
 - mk_domain1.dat のファイル名を mk_domain1_20.dat に変更
 - その後MTALABで、以下を行う
--- plotTriangulation("mk_domain1_10.dat")
--- plotTriangulation("mk_domain1_20.dat")
+- plotTriangulation("mk_domain1_10.dat")
+- plotTriangulation("mk_domain1_20.dat")
 
 ### 図3.9
 - p1fem1("square2010.dat",@femFunc2)
@@ -48,14 +48,14 @@
 
 ### 図3.14
 - はじめに、Freefem++を利用して、
--- %freefem++ nonconvex.edp 0.7
+- freefem++ nonconvex.edp 0.7
 - nonconvex.dat のファイル名を nonconvex1.dat に変更
--- %freefem++ nonconvex.edp 1.5
+- %freefem++ nonconvex.edp 1.5
 - nonconvex.dat のファイル名を nonconvex2.dat に変更
--- %freefem++ nonconvex.edp 1.8
+- %freefem++ nonconvex.edp 1.8
 - nonconvex.dat のファイル名を nonconvex3.dat に変更
 - その後MATLABで、以下を行う
--- convex_error
+- convex_error
 
 
 # 付録 C
